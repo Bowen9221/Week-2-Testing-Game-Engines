@@ -77,7 +77,6 @@ public class P_InputSystemHandler : MonoBehaviour
 
             // Get Player Damage using a local int
             damage = player.GetPlayerDamage();
-            Debug.Log(damage);
 
             // Get the script from the hit enemy and apply the damage from the player (Gained Above)
             _enemy = collision.GetComponent<E_Base_Enemy>();

@@ -15,7 +15,7 @@ public class P_Player : MonoBehaviour
     private int _healAmount = 2; //Heal 1 heart per pickup
     [SerializeField] private int _damage = 2;
 
-    private void Start()
+    private void Awake()
     {
         _currentHealth = _maxHealth;
     }
@@ -25,6 +25,10 @@ public class P_Player : MonoBehaviour
     public int GetPlayerDamage()
     {
         return _damage;
+    }
+    public int GetPlayerHealth(int health)
+    {
+        return _currentHealth;
     }
     // Getters: ------------------------------
 
@@ -55,22 +59,9 @@ public class P_Player : MonoBehaviour
         _currentHealth += amount;
     }
 
-    private void CheckIfDead()
-    {
-        if (_currentHealth <= 0)
-        {
-            StartCoroutine(HandleDeath());
-        }
-    }
+    
 
-    private IEnumerator HandleDeath()
-    {
-        Debug.Log("You Lose");
-
-        yield return new WaitForEndOfFrame();
-        Debug.Log("Loading Scene");
-        SceneManager.LoadScene(0);
-    }
+    
     // Behavioral: --------------------------
 
     // Encapsulation: Getters and Setters ---------------------------------------
@@ -78,7 +69,6 @@ public class P_Player : MonoBehaviour
 
     private void Update()
     {
-        CheckIfDead();
     }
 
 }

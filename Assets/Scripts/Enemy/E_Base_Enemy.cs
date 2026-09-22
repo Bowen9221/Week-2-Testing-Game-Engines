@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 
- enum STATE 
+ public enum STATE 
 { 
     Spawning,
     Chasing,
@@ -15,15 +15,17 @@ using UnityEngine;
 
 public class E_Base_Enemy : MonoBehaviour
 {
-    private STATE enemyState;
-    private Rigidbody2D _rb;
-    [SerializeField] P_Player player;
+    protected STATE enemyState;
+    protected Rigidbody2D _rb;
+    [SerializeField] protected P_Player player;
     [SerializeField] private Transform _player;
+    [SerializeField] private M_Event_Manager _eventManager;
+    protected Vector2 _currentDir;
 
     [Header("Attack Variables")]
     [SerializeField] protected float _attackRange;
     [SerializeField] private float _attackDuration;
-    private bool _canAttack = false;
+    protected bool _canAttack = false;
 
     [Header("Enemy Variables")]
     [SerializeField] protected int _health;
@@ -36,6 +38,9 @@ public class E_Base_Enemy : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         enemyState = STATE.Spawning;
+        player = FindAnyObjectByType<P_Player>();
+        _player = player.transform;
+        _eventManager = FindAnyObjectByType<M_Event_Manager>();
     }
 
     private void Spawning()
@@ -43,7 +48,7 @@ public class E_Base_Enemy : MonoBehaviour
         enemyState = STATE.Chasing;
     }
 
-    public virtual void HandleMovement()
+    private void HandleMovement()
     {
 
         if (Vector2.Distance(_player.position, transform.position) <= _attackRange)
@@ -54,6 +59,7 @@ public class E_Base_Enemy : MonoBehaviour
         else
         {
             Vector2 moveDir = -1 * (transform.position - _player.position);
+            _currentDir = moveDir;
             Quaternion lookDir = Quaternion.LookRotation(Vector3.forward,moveDir);
             transform.rotation = lookDir;
 
@@ -61,7 +67,7 @@ public class E_Base_Enemy : MonoBehaviour
         }
     }
         
-    public virtual void Attack()
+    private void Attack()
     {
         if (_canAttack)
         {
@@ -74,7 +80,7 @@ public class E_Base_Enemy : MonoBehaviour
         }
     }
 
-    private IEnumerator PerformAttack()
+    public virtual IEnumerator PerformAttack()
     {
         player.TakeDamage(_attackDamage);
         yield return new WaitForSeconds(_attackDuration);
@@ -85,9 +91,9 @@ public class E_Base_Enemy : MonoBehaviour
 
     private void HandleDeath()
     {
-        this.gameObject.SetActive(false);
+        _eventManager.DecreaseEnemyCount();
+        Destroy(this.gameObject);
     }
-
 
     private void Update()
     {
@@ -115,8 +121,6 @@ public class E_Base_Enemy : MonoBehaviour
         }
     }
 
-    
-
     public void TakeDamage(int damage)
     {
         _health -= damage;
@@ -126,6 +130,8 @@ public class E_Base_Enemy : MonoBehaviour
     {
         return _health;
     }
+
+    
 
    
 }
