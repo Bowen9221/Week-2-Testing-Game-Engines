@@ -23,7 +23,6 @@ public class P_InputSystemHandler : MonoBehaviour
     [Header("Attack Variables")]
     [SerializeField] private float _animationDuration = 0.1f;
     [SerializeField] private float _knockbackStrength = 1.5f;
-    private bool _canAttack = true;
     private bool _isAttacking = false;
 
     private void Awake()

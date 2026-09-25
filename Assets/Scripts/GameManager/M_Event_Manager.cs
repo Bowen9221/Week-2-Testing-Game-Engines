@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using Unity.VisualScripting;
 
+
 public class M_Event_Manager : MonoBehaviour
 {
     // Player References
@@ -10,19 +11,19 @@ public class M_Event_Manager : MonoBehaviour
     private int _playerHealth;
 
     // Enemy references
-    [SerializeField] public GameObject[] _enemies;
+    public Base_EnemySpawner keeseSpawner;
+    public Base_EnemySpawner stelaphosSpawner;
     [SerializeField] private Transform[] _spawnPoints;
-    private int _enemyCount;
+    private int _enemyCount = 0;
 
     // WinCon references
     [SerializeField] private GameObject _triforce;
     private bool _hasWon = false;
 
-    private void Start()
+    private void Awake()
     {
         player = FindAnyObjectByType<P_Player>();
         SpawnEnemies();
-        _enemyCount = _enemies.Length;
     }
 
     private void HandleLose()
@@ -42,10 +43,24 @@ public class M_Event_Manager : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        for (int i = 0; i < _enemies.Length; i++)
+
+        for (int i = 0; i < _spawnPoints.Length; i++)
         {
-            Instantiate(_enemies[i], _spawnPoints[i].position, Quaternion.identity);
+            int _spawnerSelect;
+            _spawnerSelect = Random.Range(0, 3);
+
+            if (_spawnerSelect == 0 || _spawnerSelect == 2)
+            {
+                keeseSpawner.SpawnEnemy();
+            }
+            else
+            {
+                stelaphosSpawner.SpawnEnemy();
+            }
+
+            _enemyCount++;
         }
+
     }
 
     private void HandleWin()
@@ -65,7 +80,6 @@ public class M_Event_Manager : MonoBehaviour
 
                 if (distance <= 1f)
                 {
-                    Debug.Log("You Win!");
                     StartCoroutine(HandleWinLoseCon());
                 }
             }
@@ -83,7 +97,8 @@ public class M_Event_Manager : MonoBehaviour
     public void DecreaseEnemyCount()
     {
         _enemyCount -= 1;
-
-
     }
 }
+
+
+
